@@ -1,0 +1,47 @@
+0 verbose cli /Users/joelmartinez/.nvm/versions/node/v22.14.0/bin/node /opt/homebrew/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@10.8.3
+2 info using node@v22.14.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/joelmartinez/Documents/SWE/PromptStrike/frontEndPrototype/.npmrc
+5 silly config load:file:/Users/joelmartinez/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm exec sv create --help
+8 verbose argv "exec" "--yes" "--" "sv" "create" "--help"
+9 verbose logfile logs-max:10 dir:/Users/joelmartinez/Documents/SWE/PromptStrike/frontEndPrototype/.npm-cache/_logs/2026-04-08T06_36_55_037Z-
+10 verbose logfile /Users/joelmartinez/Documents/SWE/PromptStrike/frontEndPrototype/.npm-cache/_logs/2026-04-08T06_36_55_037Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 http fetch GET 200 https://registry.npmjs.org/sv 324ms (cache miss)
+14 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+15 http fetch GET 200 https://registry.npmjs.org/npm 434ms
+16 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+17 silly idealTree buildDeps
+18 silly fetch manifest sv@0.15.0
+19 silly packumentCache full:https://registry.npmjs.org/sv cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/sv 190ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/sv set size:undefined disposed:false
+22 silly placeDep ROOT sv@0.15.0 OK for:  want: 0.15.0
+23 silly fetch manifest @sveltejs/sv-utils@0.2.0
+24 silly packumentCache full:https://registry.npmjs.org/@sveltejs%2fsv-utils cache-miss
+25 http fetch GET 200 https://registry.npmjs.org/@sveltejs%2fsv-utils 261ms (cache miss)
+26 silly packumentCache full:https://registry.npmjs.org/@sveltejs%2fsv-utils set size:undefined disposed:false
+27 silly placeDep ROOT @sveltejs/sv-utils@0.2.0 OK for: sv@0.15.0 want: 0.2.0
+28 silly reify moves {}
+29 silly audit bulk request { sv: [ '0.15.0' ], '@sveltejs/sv-utils': [ '0.2.0' ] }
+30 silly tarball no local data for @sveltejs/sv-utils@https://registry.npmjs.org/@sveltejs/sv-utils/-/sv-utils-0.2.0.tgz. Extracting by manifest.
+31 silly tarball no local data for sv@https://registry.npmjs.org/sv/-/sv-0.15.0.tgz. Extracting by manifest.
+32 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 114ms
+33 silly audit report {}
+34 http fetch GET 200 https://registry.npmjs.org/@sveltejs/sv-utils/-/sv-utils-0.2.0.tgz 162ms (cache miss)
+35 http fetch GET 200 https://registry.npmjs.org/sv/-/sv-0.15.0.tgz 513ms (cache miss)
+36 verbose cwd /Users/joelmartinez/Documents/SWE/PromptStrike/frontEndPrototype
+37 verbose os Darwin 25.4.0
+38 verbose node v22.14.0
+39 verbose npm  v10.8.3
+40 notice
+40 notice New [31mmajor[39m version of npm available! [31m10.8.3[39m -> [34m11.12.1[39m
+40 notice Changelog: [34mhttps://github.com/npm/cli/releases/tag/v11.12.1[39m
+40 notice To update run: [4mnpm install -g npm@11.12.1[24m
+40 notice  { force: true, [Symbol(proc-log.meta)]: true }
+41 verbose exit 0
+42 info ok

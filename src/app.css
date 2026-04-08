@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-200 h-screen w-screen overflow-hidden antialiased;
+  }
+}
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  
+  aside, nav {
+    display: none !important;
+  }
+  
+  .print\:hidden {
+    display: none !important;
+  }
+  
+  .print-report {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .vulnerability-section {
+    break-before: page;
+  }
+}

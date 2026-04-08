@@ -5,6 +5,7 @@
 	import TacticalButton from '$lib/components/ui/TacticalButton.svelte';
 	import WorkflowNextBar from '$lib/components/ui/WorkflowNextBar.svelte';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { activeProject } from '$lib/stores/projects.js';
 
 	let isModalOpen = $state(false);
@@ -38,7 +39,7 @@
 <WorkflowNextBar 
 	show={$activeProject !== null} 
 	label="Continue to Enumeration" 
-	onclick={() => goto('/attack')} 
+	onclick={() => goto(`${base}/attack`)}
 />
 
 {#if isModalOpen}

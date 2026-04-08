@@ -1,12 +1,13 @@
 <script>
 	import { page } from '$app/stores';
+	import { base } from '$app/paths';
 	import Tooltip from '$lib/components/ui/Tooltip.svelte';
 </script>
 
 <div class="flex flex-wrap items-center gap-1 bg-slate-900 border-b border-slate-800 p-4 print:hidden w-full">
 	<a 
-		href="/attack" 
-		class="px-4 py-2 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === '/attack' ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+		href="{base}/attack"
+		class="px-4 py-2 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
 	>
 		Enumeration / Discovery
 	</a>
@@ -17,8 +18,8 @@
 	</div>
 
 	<a 
-		href="/attack/execute" 
-		class="px-4 py-2 ml-4 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === '/attack/execute' ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+		href="{base}/attack/execute"
+		class="px-4 py-2 ml-4 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack/execute` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
 	>
 		Execution Sandbox
 	</a>

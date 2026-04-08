@@ -1,14 +1,15 @@
 <script>
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import Tooltip from '$lib/components/ui/Tooltip.svelte';
 
 	// Reactive active tab determination based on pathname
 	let pathname = $derived($page.url.pathname);
 	let activeTab = $derived(
-		pathname.startsWith('/reports') ? 4 :
-		pathname.startsWith('/attack/execute') ? 3 :
-		pathname.startsWith('/attack') ? 2 :
+		pathname.startsWith(`${base}/reports`) ? 4 :
+		pathname.startsWith(`${base}/attack/execute`) ? 3 :
+		pathname.startsWith(`${base}/attack`) ? 2 :
 		1
 	);
 
@@ -21,10 +22,10 @@
 	}
 
 	const steps = [
-		{ num: 1, path: '/projects', label: 'Project Setup', helperMode: 'Create or select a workspace to aggregate targets and reporting.' },
-		{ num: 2, path: '/attack', label: 'Target Enumeration', helperMode: 'Discover targets. Optional if manually provided.' },
-		{ num: 3, path: '/attack/execute', label: 'Attack Execution', helperMode: 'Execute attacks against gathered endpoints.' },
-		{ num: 4, path: '/reports', label: 'Analytical Reporting', helperMode: 'Review metrics and successes.' }
+		{ num: 1, path: `${base}/projects`, label: 'Project Setup', helperMode: 'Create or select a workspace to aggregate targets and reporting.' },
+		{ num: 2, path: `${base}/attack`, label: 'Target Enumeration', helperMode: 'Discover targets. Optional if manually provided.' },
+		{ num: 3, path: `${base}/attack/execute`, label: 'Attack Execution', helperMode: 'Execute attacks against gathered endpoints.' },
+		{ num: 4, path: `${base}/reports`, label: 'Analytical Reporting', helperMode: 'Review metrics and successes.' }
 	];
 </script>
 

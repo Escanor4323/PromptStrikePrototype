@@ -6,6 +6,7 @@
 	import { activeProject } from '$lib/stores/projects.js';
 	import { activeProjectTargets } from '$lib/stores/targets.js';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 
 	let viewMode = $state('table'); // 'table' | 'topology'
 </script>
@@ -59,7 +60,7 @@
 		<WorkflowNextBar 
 			show={$activeProjectTargets.length > 0} 
 			label="Continue to Attack Execution" 
-			onclick={() => goto('/attack/execute')} 
+			onclick={() => goto(`${base}/attack/execute`)}
 		/>
 	{/if}
 </div>

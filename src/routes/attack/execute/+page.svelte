@@ -6,6 +6,7 @@
 	import { addLogEntries } from '$lib/stores/attackLogs.js';
 	import { generateMockLogEntry } from '$lib/data/mockAttacks.js';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	
 	import AttackConfigPanel from '$lib/components/AttackConfigPanel.svelte';
 	import AttackProgressBar from '$lib/components/AttackProgressBar.svelte';
@@ -223,7 +224,7 @@
 		<WorkflowNextBar 
 			show={$activeProjectAssessments.length > 0 && !isRunning} 
 			label="View Analytical Reports" 
-			onclick={() => goto('/reports')} 
+			onclick={() => goto(`${base}/reports`)}
 		/>
 	{/if}
 </div>

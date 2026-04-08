@@ -1,13 +1,14 @@
 <script>
 	import TacticalButton from '$lib/components/ui/TacticalButton.svelte';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 
 	let username = $state('');
 	let password = $state('');
 
 	function handleLogin(e) {
 		e.preventDefault();
-		goto('/projects');
+		goto(`${base}/projects`);
 	}
 </script>
 

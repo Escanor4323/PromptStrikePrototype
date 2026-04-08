@@ -33,16 +33,13 @@
 	<div class="tabs">
 		{#each steps as step}
 			<div class="tab-group flex flex-col items-center flex-shrink-0 w-24 md:w-32">
-				<input 
-					id={`tab${step.num}`} 
-					type="checkbox" 
-					class="hidden"
-					checked={activeTab >= step.num}
-					onclick={(e) => { e.preventDefault(); handleTabClick(step.num, step.path); }}
-				/>
-				<label for={`tab${step.num}`} title={step.label}>
+				<button
+					class="tab-label {activeTab >= step.num ? 'active' : ''}"
+					title={step.label}
+					onclick={() => handleTabClick(step.num, step.path)}
+				>
 					<span>{step.num}</span>
-				</label>
+				</button>
 				<div class="h-10 mt-6 flex justify-center w-full">
 					<span class="text-[9px] md:text-[10px] text-center tracking-widest uppercase font-bold transition-all duration-300 {activeTab === step.num ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)] scale-105' : 'text-slate-600'} flex flex-col items-center gap-1">
 						{step.label}
@@ -76,12 +73,7 @@
 		position: relative;
 	}
 
-	.tab-group input {
-		appearance: none;
-		display: none;
-	}
-
-	.tab-group label {
+	.tab-label {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -99,7 +91,7 @@
 		z-index: 10;
 	}
 
-	.tab-group label::after {
+	.tab-label::after {
 		content: "";
 		position: absolute;
 		bottom: -20px;
@@ -116,7 +108,7 @@
 		transition: all 0.48s 0.2s cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
-	.tab-group label::before {
+	.tab-label::before {
 		content: "";
 		position: absolute;
 		top: -24px;
@@ -133,18 +125,18 @@
 		transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
-	.tab-group label:hover {
+	.tab-label:hover {
 		border-color: #06b6d4;
 		color: #06b6d4;
 	}
 
-	.tab-group input:checked + label {
+	.tab-label.active {
 		border-color: transparent;
 		color: #ffffff;
 		scale: 1.1;
 	}
 
-	.tab-group input:checked + label::after {
+	.tab-label.active::after {
 		bottom: -16px;
 		opacity: 1;
 		scale: 1;
@@ -156,7 +148,7 @@
 			0rem 152px 43px rgba(6, 182, 212, 0);
 	}
 
-	.tab-group input:checked + label::before {
+	.tab-label.active::before {
 		opacity: 1;
 		scale: 1;
 		top: 50%;

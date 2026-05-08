@@ -46,7 +46,7 @@ export function computePerTargetBreakdown(assessments, targets) {
 	return Object.values(breakdownMap).map(b => {
 		const target = targetMap.get(b.targetId);
 		return {
-			targetUrl: target ? target.endpointUrl : 'Unknown Target',
+			targetUrl: target ? target.apiEndpoint : 'Unknown Target',
 			llmType: target ? target.detectedType : 'Unknown',
 			successes: b.successes,
 			failures: b.failures,
@@ -64,6 +64,7 @@ export function computeVulnerabilityRows(assessments, targets, logStore) {
 	const targetMap = new Map();
 	targets.forEach(t => targetMap.set(t.id, t));
 
+	/** @type {{ targetUrl: string, llmType: string, attackTool: string, attackType: string, payload: string, timestamp: string }[]} */
 	const rows = [];
 
 	assessments.filter(a => a.status === 'completed').forEach(a => {
@@ -75,11 +76,11 @@ export function computeVulnerabilityRows(assessments, targets, logStore) {
 		
 		successfulExploits.forEach(log => {
 			rows.push({
-				targetUrl: target ? target.endpointUrl : 'Unknown',
+				targetUrl: target ? target.apiEndpoint : 'Unknown',
 				llmType: target ? target.detectedType : 'Unknown',
 				attackTool: a.attackTool,
 				attackType: a.attackType,
-				payload: log.payloadSent,
+				payload: log.promptPayload,
 				timestamp: log.timestamp
 			});
 		});

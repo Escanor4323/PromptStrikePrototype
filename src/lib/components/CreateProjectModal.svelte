@@ -3,9 +3,9 @@
 
 	let { onClose } = $props();
 
-	let name = $state('');
-	/** @type {import('$lib/types/project.js').Project['type']} */
-	let type = $state('CVI');
+	let projectName = $state('');
+	/** @type {import('$lib/types/project.js').Project['assessmentType']} */
+	let assessmentType = $state('CVI');
 	let startDate = $state('');
 	let endDate = $state('');
 	let initials = $state('');
@@ -16,7 +16,7 @@
 	function validate() {
 		/** @type {Record<string, string>} */
 		let e = {};
-		if (!name.trim()) e.name = "Required";
+		if (!projectName.trim()) e.projectName = "Required";
 		if (!startDate) e.startDate = "Required";
 		if (!endDate) e.endDate = "Required";
 		if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
@@ -34,8 +34,8 @@
 		e.preventDefault();
 		if (validate()) {
 			addProject({
-				name,
-				type,
+				projectName,
+				assessmentType,
 				startDate,
 				endDate,
 				analystInitials: initials
@@ -56,7 +56,7 @@
 				<svg class="w-5 h-5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 				</svg>
-				New Assessment
+				New Project
 			</h2>
 			<button class="text-slate-500 hover:text-slate-300 transition-colors" onclick={onClose} aria-label="Close modal">
 				<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -67,19 +67,19 @@
 
 		<form class="p-6 space-y-5" onsubmit={handleSubmit}>
 			<div>
-				<label class="block text-sm font-medium text-slate-400 mb-1.5" for="name">Name of Assessment</label>
-				<input id="name" type="text" bind:value={name} class="w-full bg-slate-950 border {errors.name ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/20'} rounded-md py-2 px-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 transition-all" placeholder="e.g. Project Enigma Weaver" />
-				{#if errors.name}
-					<p class="mt-1 text-xs text-red-400">{errors.name}</p>
+				<label class="block text-sm font-medium text-slate-400 mb-1.5" for="projectName">Project Name</label>
+				<input id="projectName" type="text" bind:value={projectName} class="w-full bg-slate-950 border {errors.projectName ? 'border-red-500 focus:ring-red-500' : 'border-slate-700 focus:border-cyan-500 focus:ring-cyan-500/20'} rounded-md py-2 px-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 transition-all" placeholder="e.g. Project Enigma Weaver" />
+				{#if errors.projectName}
+					<p class="mt-1 text-xs text-red-400">{errors.projectName}</p>
 				{/if}
 			</div>
 
 			<div class="grid grid-cols-2 gap-4">
 				<div>
-					<label class="block text-sm font-medium text-slate-400 mb-1.5" for="type">Assessment Type</label>
-					<select id="type" bind:value={type} class="w-full bg-slate-950 border border-slate-700 rounded-md py-2 px-3 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all appearance-none cursor-pointer">
-						<option value="CVI">CVI (Code Vulnerability Injection)</option>
-						<option value="CVPA">CVPA (Cyber Vulnerability & Penetration Assessment)</option>
+					<label class="block text-sm font-medium text-slate-400 mb-1.5" for="assessmentType">Assessment Type</label>
+					<select id="assessmentType" bind:value={assessmentType} class="w-full bg-slate-950 border border-slate-700 rounded-md py-2 px-3 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all appearance-none cursor-pointer">
+						<option value="CVI">CVI (Cooperative Vulnerability Inspection)</option>
+						<option value="CVPA">CVPA (Cyber Vulnerability &amp; Penetration Assessment)</option>
 					</select>
 				</div>
 				<div>

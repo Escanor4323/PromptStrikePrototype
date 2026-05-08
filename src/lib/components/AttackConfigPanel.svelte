@@ -3,12 +3,16 @@
 	import { activeProjectTargets } from '$lib/stores/targets.js';
 	import { ATTACK_TOOLS, ATTACK_TYPES } from '$lib/types/assessment.js';
 
-	let { isRunning = false, onlaunch } = $props();
+	let { isRunning = false, isPaused = false, preselectedTargetId = '', onlaunch } = $props();
 
 	let selectedTargetId = $state('');
 	let selectedTool = $state(ATTACK_TOOLS[0]);
 	let selectedType = $state(ATTACK_TYPES[0]);
 	let customPayload = $state('');
+
+	$effect(() => {
+		if (preselectedTargetId) selectedTargetId = preselectedTargetId;
+	});
 
 	/** @param {Event} e */
 	function handleLaunch(e) {
@@ -25,7 +29,7 @@
 </script>
 
 <form onsubmit={handleLaunch} class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg flex flex-col h-full relative overflow-hidden group">
-	{#if isRunning}
+	{#if isRunning || isPaused}
 		<div class="absolute inset-0 bg-slate-950/40 z-10 pointer-events-none"></div>
 	{/if}
 
@@ -43,13 +47,13 @@
 			<select 
 				id="targetEndpoint"
 				bind:value={selectedTargetId} 
-				disabled={isRunning || $activeProjectTargets.length === 0}
+				disabled={isRunning || isPaused || $activeProjectTargets.length === 0}
 				class="w-full bg-slate-950 border border-slate-700/60 rounded px-3 py-2 text-sm text-slate-200 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 disabled:opacity-50"
 				required
 			>
 				<option value="" disabled>Select target...</option>
 				{#each $activeProjectTargets as target}
-					<option value={target.id}>{target.endpointUrl} ({target.detectedType})</option>
+					<option value={target.id}>{target.apiEndpoint} ({target.detectedType})</option>
 				{/each}
 			</select>
 			{#if $activeProjectTargets.length === 0}
@@ -99,7 +103,7 @@
 	</div>
 
 	<div class="mt-6 pt-4 border-t border-slate-800 relative z-20">
-		<TacticalButton type="submit" disabled={isRunning || !selectedTargetId} icon='<path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.45c.019-.104.039-.208.06-.311m-2.7-2.7a15.15 15.15 0 00-2.448-2.45m2.448 2.45a15.15 15.15 0 012.448 2.45m-2.448-2.45" />'>
+		<TacticalButton type="submit" disabled={isRunning || isPaused || !selectedTargetId} icon='<path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.45c.019-.104.039-.208.06-.311m-2.7-2.7a15.15 15.15 0 00-2.448-2.45m2.448 2.45a15.15 15.15 0 012.448 2.45m-2.448-2.45" />'>
 			Launch Attack
 		</TacticalButton>
 	</div>

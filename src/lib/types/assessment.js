@@ -1,15 +1,15 @@
 export {};
 
 /**
- * @typedef {'Garak' | 'Promptfoo' | 'ChainForge'} AttackTool
+ * @typedef {'Garak' | 'Promptfoo' | 'Chainforge'} AttackTool
  */
 
 /**
- * @typedef {'Prompt Injection' | 'Jailbreak' | 'Data Exfiltration' | 'Role Manipulation'} AttackType
+ * @typedef {'Prompt Injection' | 'Jailbreaking' | 'Data Leakage'} AttackType
  */
 
 /**
- * @typedef {'running' | 'completed' | 'cancelled'} AssessmentStatus
+ * @typedef {'pending' | 'running' | 'paused' | 'completed' | 'failed'} AssessmentStatus
  */
 
 /**
@@ -20,10 +20,16 @@ export {};
  * @typedef {Object} AttackLogEntry
  * @property {string} id
  * @property {string} timestamp
- * @property {string} payloadSent
- * @property {string} targetResponse
+ * @property {string} promptPayload
+ * @property {string} llmResponse
  * @property {LogEntryStatus} status
+ * @property {boolean} isVulnerable
  * @property {number} iterationNumber
+ * @property {string} sourceTool
+ * @property {string} targetID
+ * @property {string} projectID
+ * @property {string} rawOutput
+ * @property {number} executionTime
  */
 
 /**
@@ -41,6 +47,6 @@ export {};
  * @property {AssessmentStatus} status
  */
 
-export const ATTACK_TOOLS = ['Garak', 'Promptfoo', 'ChainForge'];
-export const ATTACK_TYPES = ['Prompt Injection', 'Jailbreak', 'Data Exfiltration', 'Role Manipulation'];
-export const ASSESSMENT_STATUSES = ['running', 'completed', 'cancelled'];
+export const ATTACK_TOOLS = ['Garak', 'Promptfoo', 'Chainforge'];
+export const ATTACK_TYPES = ['Prompt Injection', 'Jailbreaking', 'Data Leakage'];
+export const ASSESSMENT_STATUSES = ['pending', 'running', 'paused', 'completed', 'failed'];

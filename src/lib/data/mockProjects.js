@@ -2,8 +2,8 @@
 export const mockProjects = [
 	{
 		id: 'proj-1001',
-		name: 'Operation Dark Nebula',
-		type: 'CVPA',
+		projectName: 'Operation Dark Nebula',
+		assessmentType: 'CVPA',
 		startDate: '2026-04-01',
 		endDate: '2026-04-15',
 		analystInitials: 'JM',
@@ -11,8 +11,8 @@ export const mockProjects = [
 	},
 	{
 		id: 'proj-1002',
-		name: 'Project Enigma Weaver',
-		type: 'CVI',
+		projectName: 'Project Enigma Weaver',
+		assessmentType: 'CVI',
 		startDate: '2026-03-10',
 		endDate: '2026-03-25',
 		analystInitials: 'JM',
@@ -20,8 +20,8 @@ export const mockProjects = [
 	},
 	{
 		id: 'proj-1003',
-		name: 'Ghost Protocol Assessment',
-		type: 'CVPA',
+		projectName: 'Ghost Protocol Assessment',
+		assessmentType: 'CVPA',
 		startDate: '2026-04-10',
 		endDate: '2026-05-01',
 		analystInitials: 'AK',
@@ -29,8 +29,8 @@ export const mockProjects = [
 	},
 	{
 		id: 'proj-1004',
-		name: 'LLM Boundary Stress Test',
-		type: 'CVI',
+		projectName: 'LLM Boundary Stress Test',
+		assessmentType: 'CVI',
 		startDate: '2026-04-05',
 		endDate: '2026-04-20',
 		analystInitials: 'RS',
@@ -38,8 +38,8 @@ export const mockProjects = [
 	},
 	{
 		id: 'proj-1005',
-		name: 'Sentinel Bypass Analysis',
-		type: 'CVPA',
+		projectName: 'Sentinel Bypass Analysis',
+		assessmentType: 'CVPA',
 		startDate: '2026-05-01',
 		endDate: '2026-05-30',
 		analystInitials: 'TB',

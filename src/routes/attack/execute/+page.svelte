@@ -1,9 +1,11 @@
 <script>
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { page } from '$app/state';
 	import { activeProject } from '$lib/stores/projects.js';
 	import { activeProjectTargets } from '$lib/stores/targets.js';
 	import { addAssessment, updateAssessment, activeProjectAssessments } from '$lib/stores/assessments.js';
 	import { addLogEntries } from '$lib/stores/attackLogs.js';
+	import { addAssessmentResult } from '$lib/stores/assessmentResults.js';
 	import { generateMockLogEntry } from '$lib/data/mockAttacks.js';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
@@ -11,17 +13,28 @@
 	import AttackConfigPanel from '$lib/components/AttackConfigPanel.svelte';
 	import AttackProgressBar from '$lib/components/AttackProgressBar.svelte';
 	import AttackConsole from '$lib/components/AttackConsole.svelte';
+	import AttackSessionMetrics from '$lib/components/AttackSessionMetrics.svelte';
 	import WorkflowNextBar from '$lib/components/ui/WorkflowNextBar.svelte';
 
 	let isRunning = $state(false);
+	let isPaused = $state(false);
+	let hasError = $state(false);
 	let currentIteration = $state(0);
 	let totalIterations = $state(0);
 	/** @type {import('$lib/types/assessment.js').AttackLogEntry[]} */
 	let logEntries = $state([]);
+	/** @type {{ targetId: string; attackTool: import('$lib/types/assessment.js').AttackTool; attackType: import('$lib/types/assessment.js').AttackType; customPayload: string } | null} */
+	let lastConfig = $state(null);
 	
 	let currentAssessmentId = $state('');
+	let preselectedTargetId = $state('');
 	/** @type {ReturnType<typeof setInterval> | null} */
 	let intervalId = null;
+
+	onMount(() => {
+		const targetId = page.url.searchParams.get('targetId');
+		if (targetId) preselectedTargetId = targetId;
+	});
 
 	function cleanupInterval() {
 		if (intervalId) {
@@ -31,8 +44,8 @@
 	}
 
 	onDestroy(() => {
-		if (isRunning && currentAssessmentId && $activeProject) {
-			updateAssessment($activeProject.id, currentAssessmentId, { status: 'cancelled' });
+		if ((isRunning || isPaused) && currentAssessmentId && $activeProject) {
+			updateAssessment($activeProject.id, currentAssessmentId, { status: 'failed' });
 		}
 		cleanupInterval();
 	});
@@ -47,7 +60,10 @@
 	function handleLaunch(config) {
 		if (!$activeProject) return;
 
+		lastConfig = config;
 		isRunning = true;
+		isPaused = false;
+		hasError = false;
 		currentIteration = 0;
 		totalIterations = Math.floor(Math.random() * 11) + 10;
 		logEntries = [];
@@ -65,35 +81,61 @@
 			failures: 0,
 			startedAt: new Date().toISOString(),
 			completedAt: null,
-			status: 'running'
+			status: 'pending'
 		};
 		addAssessment($activeProject.id, newAssessment);
+		updateAssessment($activeProject.id, currentAssessmentId, { status: 'running' });
 
+		startInterval(config);
+	}
+
+	/**
+	 * @param {{ targetId: string; attackTool: import('$lib/types/assessment.js').AttackTool; attackType: import('$lib/types/assessment.js').AttackType; customPayload: string }} config
+	 */
+	function startInterval(config) {
+		const projectId = $activeProject?.id ?? '';
 		intervalId = setInterval(() => {
 			if (!$activeProjectTargets.find(t => t.id === config.targetId)) {
-				logEntries = [...logEntries, {
+				/** @type {import('$lib/types/assessment.js').AttackLogEntry} */
+				const errorEntry = {
 					id: `err-${Date.now()}`,
 					timestamp: new Date().toISOString(),
-					payloadSent: 'SYSTEM HALT',
-					targetResponse: 'Target endpoint no longer available.',
+					promptPayload: 'SYSTEM HALT',
+					llmResponse: 'Target endpoint no longer available.',
+					rawOutput: 'Target endpoint no longer available.',
 					status: 'fail',
-					iterationNumber: currentIteration
-				}];
-				handleStop();
+					isVulnerable: false,
+					iterationNumber: currentIteration,
+					sourceTool: config.attackTool,
+					targetID: config.targetId,
+					projectID: projectId,
+					executionTime: 0
+				};
+				logEntries = [...logEntries, errorEntry];
+				addLogEntries(currentAssessmentId, [errorEntry]);
+				hasError = true;
+				cleanupInterval();
+				isRunning = false;
+				if ($activeProject) {
+					updateAssessment($activeProject.id, currentAssessmentId, {
+						status: 'failed',
+						completedAt: new Date().toISOString()
+					});
+				}
 				return;
 			}
 
 			currentIteration++;
-			const entry = generateMockLogEntry(currentIteration, config.attackType, config.customPayload);
+			const entry = generateMockLogEntry(currentIteration, config.attackType, config.customPayload, config.targetId, projectId, config.attackTool);
 			logEntries = [...logEntries, entry];
-			
 			addLogEntries(currentAssessmentId, [entry]);
 
-			const isSuccess = entry.status === 'success';
-			updateAssessment($activeProject.id, currentAssessmentId, {
-				successes: newAssessment.successes + logEntries.filter(e => e.status === 'success').length,
-				failures: newAssessment.failures + logEntries.filter(e => e.status === 'fail').length,
-			});
+			if ($activeProject) {
+				updateAssessment($activeProject.id, currentAssessmentId, {
+					successes: logEntries.filter(e => e.status === 'success').length,
+					failures: logEntries.filter(e => e.status === 'fail').length,
+				});
+			}
 
 			if (currentIteration >= totalIterations) {
 				handleComplete();
@@ -101,30 +143,75 @@
 		}, 1500);
 	}
 
+	function handlePause() {
+		if (!isRunning || isPaused) return;
+		cleanupInterval();
+		isPaused = true;
+		if ($activeProject && currentAssessmentId) {
+			updateAssessment($activeProject.id, currentAssessmentId, { status: 'paused' });
+		}
+	}
+
+	function handleResume() {
+		if (!isPaused || !lastConfig) return;
+		isPaused = false;
+		if ($activeProject && currentAssessmentId) {
+			updateAssessment($activeProject.id, currentAssessmentId, { status: 'running' });
+		}
+		startInterval(lastConfig);
+	}
+
 	function handleStop() {
 		if (!$activeProject || !currentAssessmentId) return;
 		cleanupInterval();
 		isRunning = false;
+		isPaused = false;
+		hasError = false;
 		updateAssessment($activeProject.id, currentAssessmentId, { 
-			status: 'cancelled',
+			status: 'failed',
 			completedAt: new Date().toISOString()
 		});
+	}
+
+	function handleRetry() {
+		if (!lastConfig) return;
+		hasError = false;
+		handleLaunch(lastConfig);
+	}
+
+	function handleAbort() {
+		hasError = false;
+		isRunning = false;
+		isPaused = false;
+		logEntries = [];
+		currentAssessmentId = '';
+		lastConfig = null;
 	}
 
 	function handleComplete() {
 		if (!$activeProject || !currentAssessmentId) return;
 		cleanupInterval();
 		isRunning = false;
+		isPaused = false;
+		const completedAt = new Date().toISOString();
 		updateAssessment($activeProject.id, currentAssessmentId, { 
 			status: 'completed',
-			completedAt: new Date().toISOString()
+			completedAt
+		});
+		addAssessmentResult($activeProject.id, {
+			result_id: crypto.randomUUID(),
+			project_id: $activeProject.id,
+			reportTimestamp: completedAt,
+			attackResults: $activeProjectAssessments,
+			visualizations: [],
+			payloads: logEntries.map(e => e.promptPayload)
 		});
 	}
 	
 	/** @param {string} targetId */
 	function getTargetUrl(targetId) {
 		const target = $activeProjectTargets.find(t => t.id === targetId);
-		return target ? target.endpointUrl : 'Unknown';
+		return target ? target.apiEndpoint : 'Unknown';
 	}
 </script>
 
@@ -149,18 +236,38 @@
 			<div class="w-full lg:w-1/3 min-w-[320px]">
 				<AttackConfigPanel 
 					{isRunning}
+					{isPaused}
+					preselectedTargetId={preselectedTargetId}
 					onlaunch={handleLaunch} 
 				/>
 			</div>
 
 			<!-- Live Execution Viewer (Right) -->
-			<div class="w-full lg:w-2/3 flex flex-col gap-6">
+			<div class="w-full lg:w-2/3 flex flex-col gap-4">
+				<AttackSessionMetrics {logEntries} />
 				<AttackProgressBar 
 					current={currentIteration}
 					total={totalIterations}
 					{isRunning}
+					{isPaused}
 					onstop={handleStop}
+					onpause={handlePause}
+					onresume={handleResume}
 				/>
+				{#if hasError}
+					<div class="bg-red-950/40 border border-red-500/30 rounded-xl p-4 flex items-center justify-between gap-4">
+						<div class="flex items-center gap-3">
+							<svg class="w-5 h-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+							</svg>
+							<span class="text-sm text-red-300 font-medium">Attack halted: target endpoint no longer available.</span>
+						</div>
+						<div class="flex items-center gap-2 shrink-0">
+							<button class="px-3 py-1.5 text-xs font-bold text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 rounded transition-colors" onclick={handleRetry}>Retry</button>
+							<button class="px-3 py-1.5 text-xs font-bold text-slate-400 border border-slate-700 bg-slate-800 hover:bg-slate-700 rounded transition-colors" onclick={handleAbort}>Abort</button>
+						</div>
+					</div>
+				{/if}
 				<AttackConsole {logEntries} />
 			</div>
 		</div>
@@ -206,12 +313,14 @@
 										<span class="text-slate-500">({assessment.totalAttempts} total)</span>
 									</td>
 									<td class="px-6 py-4">
-										<span class="px-2 py-1 text-[10px] font-bold tracking-wider rounded border 
+									<span class="px-2 py-1 text-[10px] font-bold tracking-wider rounded border 
 											{assessment.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
-											 assessment.status === 'cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 
-											 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'}">
-											{assessment.status}
-										</span>
+											 assessment.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+											 assessment.status === 'paused' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+											 assessment.status === 'running' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' :
+											 'bg-slate-800 text-slate-400 border-slate-700'}">
+										{assessment.status}
+									</span>
 									</td>
 								</tr>
 							{/each}

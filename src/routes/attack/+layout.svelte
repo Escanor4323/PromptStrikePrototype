@@ -13,7 +13,7 @@
 		<div class="mb-2">
 			<h1 class="text-3xl font-bold text-slate-100 tracking-tight">Attack Operations</h1>
 			{#if $activeProject}
-				<p class="text-cyan-400 mt-1 font-mono text-xs uppercase tracking-widest"><span class="text-slate-500">Target Space:</span> {$activeProject.name}</p>
+				<p class="text-cyan-400 mt-1 font-mono text-xs uppercase tracking-widest"><span class="text-slate-500">Target Space:</span> {$activeProject.projectName}</p>
 			{/if}
 		</div>
 		

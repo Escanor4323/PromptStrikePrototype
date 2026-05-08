@@ -1,27 +1,34 @@
 <script>
 	import { page } from '$app/stores';
 	import { base } from '$app/paths';
-	import Tooltip from '$lib/components/ui/Tooltip.svelte';
 </script>
 
-<div class="flex flex-wrap items-center gap-1 bg-slate-900 border-b border-slate-800 p-4 print:hidden w-full">
-	<a 
+<div class="flex flex-wrap items-center gap-1 bg-slate-900 border-b border-slate-800 px-4 py-2 print:hidden w-full">
+	<a
 		href="{base}/attack"
-		class="px-4 py-2 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+		class="px-3 py-2 text-xs font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
 	>
-		Enumeration / Discovery
+		Target Enumeration
 	</a>
-	<Tooltip position="bottom" class="mr-4" text="Discover and define target endpoints. Optional if targets are already known." />
 
-	<div class="mx-2 flex items-center justify-center text-slate-700 text-[10px] font-bold px-2 py-0.5 bg-slate-950 rounded border border-slate-800">
-		OR
-	</div>
+	<a
+		href="{base}/attack/manual"
+		class="px-3 py-2 text-xs font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack/manual` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+	>
+		Manual Prompt
+	</a>
 
-	<a 
+	<a
 		href="{base}/attack/execute"
-		class="px-4 py-2 ml-4 text-sm font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack/execute` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+		class="px-3 py-2 text-xs font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack/execute` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
 	>
-		Execution Sandbox
+		Tool Attack
 	</a>
-	<Tooltip position="bottom" text="Launch configured attacks against any targets already gathered." />
+
+	<a
+		href="{base}/attack/dashboard"
+		class="px-3 py-2 text-xs font-mono tracking-widest uppercase rounded-md transition-colors whitespace-nowrap {$page.url.pathname === `${base}/attack/dashboard` ? 'bg-slate-800 text-cyan-300 shadow-sm border border-slate-700/50' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'}"
+	>
+		Dashboard
+	</a>
 </div>

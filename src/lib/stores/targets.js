@@ -10,17 +10,30 @@ export const targetStore = writable({
 });
 
 /**
- * @param {string} projectId 
- * @param {import('../types/target.js').Target[]} newTargets 
+ * @param {string} projectId
+ * @param {import('../types/target.js').Target[]} newTargets
+ * @returns {{ added: number, skipped: string[] }}
  */
 export function addTargets(projectId, newTargets) {
+	/** @type {{ added: number, skipped: string[] }} */
+	let result = { added: 0, skipped: [] };
 	targetStore.update(store => {
 		const existing = store[projectId] || [];
+		const seen = new Set(existing.map(t => t.apiEndpoint));
+		const deduped = newTargets.filter(t => {
+			if (seen.has(t.apiEndpoint)) {
+				result.skipped.push(t.apiEndpoint);
+				return false;
+			}
+			return true;
+		});
+		result.added = deduped.length;
 		return {
 			...store,
-			[projectId]: [...existing, ...newTargets]
+			[projectId]: [...existing, ...deduped]
 		};
 	});
+	return result;
 }
 
 /**

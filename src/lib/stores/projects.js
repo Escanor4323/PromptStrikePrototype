@@ -12,13 +12,20 @@ export function addProject(projectData) {
 	projectList.update((list) => {
 		return [
 			{
-				id: `proj-${Math.floor(Math.random() * 10000)}`,
+				id: crypto.randomUUID(),
 				createdAt: Date.now(),
 				...projectData
 			},
 			...list
 		];
 	});
+}
+
+/**
+ * @param {string} projectId
+ */
+export function deleteProject(projectId) {
+	projectList.update((list) => list.filter((p) => p.id !== projectId));
 }
 
 /**

@@ -8,6 +8,10 @@
 	let manualUrl = $state('');
 	let isDiscovering = $state(false);
 	let ingestMessage = $state('');
+	/** @type {string[]} */
+	let offlineWarnings = $state([]);
+	/** @type {string[]} */
+	let duplicateWarnings = $state([]);
 
 	/** @param {string[]} urls */
 	async function handleIngest(urls) {
@@ -19,17 +23,21 @@
 
 		isDiscovering = true;
 		ingestMessage = '';
+		offlineWarnings = [];
+		duplicateWarnings = [];
 
-		// Fake network delay for tactical aesthetic
 		await new Promise(r => setTimeout(r, 1500));
 
-		const newTargets = simulateDiscovery(urls);
-		addTargets($activeProject.id, newTargets);
+		const discovered = simulateDiscovery(urls);
+		const result = addTargets($activeProject.id, discovered);
+
+		offlineWarnings = discovered.filter(t => t.status === 'Offline').map(t => t.apiEndpoint);
+		duplicateWarnings = result.skipped;
 
 		isDiscovering = false;
-		ingestMessage = `Successfully discovered ${newTargets.length} endpoints.`;
+		ingestMessage = `Added ${result.added} endpoint${result.added !== 1 ? 's' : ''}.`;
 		manualUrl = '';
-		setTimeout(() => ingestMessage = '', 4000);
+		setTimeout(() => ingestMessage = '', 5000);
 	}
 
 	/** @param {Event} e */
@@ -39,9 +47,10 @@
 		handleIngest([manualUrl]);
 	}
 
-	/** @param {Event & { target: HTMLInputElement }} e */
+	/** @param {Event} e */
 	function handleFileUpload(e) {
-		const file = e.target.files?.[0];
+		const input = /** @type {HTMLInputElement} */ (e.currentTarget);
+		const file = input.files?.[0];
 		if (!file) return;
 
 		const reader = new FileReader();
@@ -76,9 +85,25 @@
 				{/if}
 			</TacticalButton>
 		</form>
-		{#if ingestMessage}
-			<p class="mt-3 text-xs font-mono text-cyan-400">{ingestMessage}</p>
-		{/if}
+	{#if ingestMessage}
+		<p class="mt-3 text-xs font-mono text-cyan-400">{ingestMessage}</p>
+	{/if}
+	{#if offlineWarnings.length > 0}
+		<div class="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-md">
+			<p class="text-xs font-bold text-yellow-400 mb-1">Offline targets detected:</p>
+			{#each offlineWarnings as url}
+				<p class="text-xs font-mono text-yellow-300/70 truncate">{url}</p>
+			{/each}
+		</div>
+	{/if}
+	{#if duplicateWarnings.length > 0}
+		<div class="mt-2 p-2 bg-orange-500/10 border border-orange-500/30 rounded-md">
+			<p class="text-xs font-bold text-orange-400 mb-1">Skipped (already added):</p>
+			{#each duplicateWarnings as url}
+				<p class="text-xs font-mono text-orange-300/70 truncate">{url}</p>
+			{/each}
+		</div>
+	{/if}
 	</div>
 
 	<div class="hidden md:block w-px bg-slate-800"></div>

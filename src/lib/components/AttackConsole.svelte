@@ -11,7 +11,7 @@
 	function handleScroll() {
 		if (!terminalContainer) return;
 		const { scrollTop, scrollHeight, clientHeight } = terminalContainer;
-		if (scrollHeight - Math.round(scrollTop) - clientHeight > 10) {
+		if (scrollHeight - scrollTop - clientHeight > 1) {
 			shouldAutoScroll = false;
 		} else {
 			shouldAutoScroll = true;
@@ -56,11 +56,11 @@
 						[{log.status}]
 					</span>
 				</div>
-				<div class="text-cyan-200 truncate pr-4" title={log.payloadSent}>
-					<span class="text-slate-500 opacity-60">>&nbsp;</span>{log.payloadSent}
+				<div class="text-cyan-200 truncate pr-4" title={log.promptPayload}>
+					<span class="text-slate-500 opacity-60">>&nbsp;</span>{log.promptPayload}
 				</div>
 				<div class="text-slate-400 mt-1">
-					{log.targetResponse}
+					{log.llmResponse}
 				</div>
 			</div>
 		{/each}

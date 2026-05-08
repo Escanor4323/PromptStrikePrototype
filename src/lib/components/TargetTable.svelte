@@ -52,8 +52,8 @@
 			<table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
 				<thead class="text-xs text-slate-400 uppercase bg-slate-950 border-b border-slate-800">
 					<tr>
-						<th scope="col" class="px-6 py-4 cursor-pointer hover:text-white" onclick={() => toggleSort('endpointUrl')}>
-							Endpoint URL {#if sortKey === 'endpointUrl'}{sortDesc ? '↓' : '↑'}{/if}
+						<th scope="col" class="px-6 py-4 cursor-pointer hover:text-white" onclick={() => toggleSort('apiEndpoint')}>
+							API Endpoint {#if sortKey === 'apiEndpoint'}{sortDesc ? '↓' : '↑'}{/if}
 						</th>
 						<th scope="col" class="px-6 py-4 cursor-pointer hover:text-white" onclick={() => toggleSort('detectedType')}>
 							Detected LLM {#if sortKey === 'detectedType'}{sortDesc ? '↓' : '↑'}{/if}
@@ -69,8 +69,8 @@
 				<tbody class="divide-y divide-slate-800">
 					{#each sortedTargets as target (target.id)}
 						<tr class="hover:bg-slate-800/50 transition-colors">
-							<td class="px-6 py-4 font-mono text-cyan-200 truncate max-w-xs" title={target.endpointUrl}>
-								{target.endpointUrl}
+							<td class="px-6 py-4 font-mono text-cyan-200 truncate max-w-xs" title={target.apiEndpoint}>
+								{target.apiEndpoint}
 							</td>
 							<td class="px-6 py-4">
 								<span class="px-2 py-1 text-[10px] font-bold tracking-wider rounded border {getTypeBadge(target.detectedType)}">

@@ -83,9 +83,9 @@ export function calculateLayout(targets, width = 800, height = 600) {
 			}
 			
 			// Try to extract hostname for label
-			let label = t.endpointUrl;
+			let label = t.apiEndpoint;
 			try {
-				const url = new URL(t.endpointUrl);
+				const url = new URL(t.apiEndpoint);
 				label = url.hostname || url.pathname;
 			} catch (e) {
 				// keep default
